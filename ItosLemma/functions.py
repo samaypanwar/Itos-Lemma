@@ -133,13 +133,12 @@ def euler_maruyama(derivativeDrift, derivativeDiffusion, timePeriod, sizeOfTimeI
     """
 
     N = int(timePeriod / sizeOfTimeInterval)
+    dt = sizeOfTimeInterval
     # Create empty simulated series for all simulations
     derivativeTimeSeries = {str(simulation):np.zeros(N+1) for simulation in range(1, numberOfSimulations + 1)}
-    dt = sizeOfTimeInterval 
 
     for simulation in range(1, numberOfSimulations + 1):
         for t in range(N):
-
             dW = np.random.normal(scale = np.sqrt(dt))  # Random component dW for each interval
             Yt = derivativeTimeSeries[str(simulation)][t]
             derivativeTimeSeries[str(simulation)][t + 1] = Yt + derivativeDrift(X=Yt, t=t) * dt + derivativeDiffusion(X=Yt, t=t) * dW

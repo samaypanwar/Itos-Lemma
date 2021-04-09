@@ -1,16 +1,19 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 import yfinance
-from icecream import ic
 from functions import *
 from sympy import *
-import os
+import yaml
+np.random.seed(3016)
 
-np.random.seed(420)
-START_DATE = "2018-09-20"
-END_DATE = "2021-03-21"
-TICKER = 'MCD'
+with open('ItosLemma/config.yaml') as file:
+    config = yaml.safe_load(file)
+
+START_DATE = config.get('START_DATE')
+END_DATE = config.get('END_DATE')
+TICKER = config.get('TICKER')
+numberOfSimulations = config.get('NUMBER_OF_SIMULATIONS')
+
 stock = yfinance.download(TICKER, start=START_DATE, end=END_DATE)
 
 returns = stock.Close.pct_change()[1:]
@@ -27,9 +30,9 @@ if __name__ == '__main__':
     derivativeDrift, derivativeDiffusion = itos_lemma(functionofX=function, driftFunction=drift,
                                                         diffusionFunction=diffusion)
     derivativeTimeSeries = euler_maruyama(derivativeDrift, derivativeDiffusion, timePeriod=len(stock),
-                                                        numberOfSimulations=50)
+                                                        numberOfSimulations=numberOfSimulations)
 
-    Simulations = geometric_brownian_motion(stock.Close)
+    Simulations = geometric_brownian_motion(stock.Close, numberOfSimluations=numberOfSimulations)
 
     fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(15,10))
     fig.suptitle('GBM simulations and Forward Price simulations', size=20)
