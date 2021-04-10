@@ -23,10 +23,11 @@ X = symbols("X")
 t = symbols("t")
 drift = mu * X
 diffusion = sigma * X
-function = X * exp(mu*(len(stock) - t))
+timeToMaturity = 5
+function = X * exp(mu*(timeToMaturity - t))
 
 if __name__ == '__main__':
-    
+
     derivativeDrift, derivativeDiffusion = itos_lemma(functionofX=function, driftFunction=drift,
                                                         diffusionFunction=diffusion)
     derivativeTimeSeries = euler_maruyama(derivativeDrift, derivativeDiffusion, timePeriod=len(stock),

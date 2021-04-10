@@ -37,7 +37,7 @@ def geometric_brownian_motion(timeSeries, numberOfSimluations=50, sizeOfTimeInte
     """ timeSeries is a one-dimensional numpy array or list.
         numberOfSimluations is the number of GBM paths we want to create
         Size of time interval is how frequent our data values are
-        If plotSimulations is True then a plot is generated with all the simulations along with 
+        If plotSimulations is True then a plot is generated with all the simulations along with
         the actual timeSeries in blue
         If returnNone is True then it does not return anything
 
@@ -60,7 +60,7 @@ def geometric_brownian_motion(timeSeries, numberOfSimluations=50, sizeOfTimeInte
     dW = {
         str(simulation): dB[str(simulation)].cumsum() * np.sqrt(sizeOfTimeInterval)
         for simulation in range(1, numberOfSimluations + 1)
-    }                                           # Brownian motion path 
+    }                                           # Brownian motion path
 
     drift = (mu - 0.5 * sigma ** 2) * t         # Drift component remains same for all simulations as it is non-stochastic
     diffusion = {
@@ -76,7 +76,7 @@ def geometric_brownian_motion(timeSeries, numberOfSimluations=50, sizeOfTimeInte
     for simulation in range(numberOfSimluations):
         Simulations[str(simulation + 1)] = S[simulation, :]
     Simulations = pd.DataFrame(data=Simulations,)
-    
+
     if plotSimulations or returnNone:
         plt.plot(Simulations)
         plt.plot(timeSeries.tolist(), color="blue", linewidth=2)
@@ -103,14 +103,14 @@ def itos_lemma(functionofX, driftFunction, diffusionFunction):
     delX = lambda function: diff(function, X)       # Partial derivative with respect to X of a function
     delT = lambda function: diff(function, t)       # Partial derivative with respect to t of a function
 
-    # These functions create lambda functions to calculate the 
+    # These functions create lambda functions to calculate the
     # the new drift and diffusion components of the derivative
     derivativeDrift = lambdify(
         [X, t],
         delT(function) + delX(function) * driftFunction
         + (1 / 2) * delX(delX(function)) * (diffusionFunction ** 2),
         "math",
-    )                                               
+    )
     derivativeDiffusion = lambdify([X, t], delX(function) * diffusionFunction, "math")
 
     return derivativeDrift, derivativeDiffusion
@@ -144,5 +144,5 @@ def euler_maruyama(derivativeDrift, derivativeDiffusion, timePeriod, sizeOfTimeI
             derivativeTimeSeries[str(simulation)][t + 1] = Yt + derivativeDrift(X=Yt, t=t) * dt + derivativeDiffusion(X=Yt, t=t) * dW
 
     derivativeTimeSeries = pd.DataFrame(derivativeTimeSeries)
-    
+
     return derivativeTimeSeries
